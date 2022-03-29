@@ -1,10 +1,9 @@
 package com.twistlock.model;
 
+import com.twistlock.Parameter;
+
 public class Docker
 {
-	// Constants
-	private static final int START_SCORE = 0;
-	private static final int START_LOCK  = 20;
 
 
 	//Attributs
@@ -18,8 +17,8 @@ public class Docker
 	{
 		this.name   = name;
 		this.color  = color;
-		this.score  = START_SCORE;
-		this.nbLock = START_LOCK;
+		this.score  = Parameter.START_SCORE;
+		this.nbLock = Parameter.START_LOCK;
 	}
 
 	// Getters
