@@ -55,7 +55,7 @@ public class PanelGrid extends JPanel
 				{
 					int l = (closestY - PanelGrid.this.oY) / containerH;
 					int c = (closestX - PanelGrid.this.oX) / containerW;
-					PanelGrid.this.ctrl.play(l, c);
+					PanelGrid.this.ctrl.play(l, c, false);
 				}
 			}
 		};

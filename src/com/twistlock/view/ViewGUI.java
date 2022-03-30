@@ -66,7 +66,7 @@ public class ViewGUI extends JFrame
 		this.setSize((int) (0.8 * screen.width), (int) (0.8 * screen.height));
 		this.setLocation((int) (0.1 * screen.width), (int) (0.1 * screen.height));
 
-		this.setTitle("Twist Lock");
+		this.setTitle("Twist Lock Client");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 	}
@@ -80,9 +80,9 @@ public class ViewGUI extends JFrame
 		this.panelGrid.repaint();
 	}
 
-	public void end(Docker winner)
+	public void end(Docker winner, boolean disconnected)
 	{
 		this.panelGrid.end();
-		this.setTitle(winner.getName() + " win with " + winner.getScore() + " point(s)");
+		this.setTitle((disconnected ? "(disconnected) " : "") + winner.getName() + " win with " + winner.getScore() + " point(s)");
 	}
 }

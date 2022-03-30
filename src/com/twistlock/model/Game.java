@@ -1,7 +1,6 @@
 package com.twistlock.model;
 
 import java.util.Arrays;
-import java.util.Random;
 
 import static com.twistlock.Parameter.LST_COLOR;
 import static com.twistlock.Parameter.NEUTRAL;
@@ -20,30 +19,29 @@ public class Game
 
 
 	// Constructor
-	public Game(String[] lstName, int nbLine, int nbCol)
+	public Game()
 	{
-		// Dockers initialisation
+		this.gameOver = false;
+	}
+
+	public void initDocker(String[] lstName)
+	{
 		this.lstDocker = new Docker[lstName.length];
 		for (int i = 0; i < this.lstDocker.length; i++)
 		     this.lstDocker[i] = new Docker(lstName[i], LST_COLOR[i]);
+	}
 
-		// Grids initialisation
-		Random random = new Random();
-		this.gridValue  = new int[nbLine][nbCol];
-		this.gridColor  = new char[nbLine][nbCol];
-		this.gridCorner = new char[nbLine + 1][nbCol + 1];
-
-		for (int l = 0; l < this.gridValue.length; l++)
-			for (int c = 0; c < this.gridValue[0].length; c++)
-			     this.gridValue[l][c] = 5 + random.nextInt(49);
+	public void initGrid(int[][] gridValue)
+	{
+		this.gridValue  = gridValue;
+		this.gridColor  = new char[gridValue.length][gridValue[0].length];
+		this.gridCorner = new char[gridValue.length + 1][gridValue[0].length + 1];
 
 		for (int l = 0; l < this.gridColor.length; l++)
 		     Arrays.fill(this.gridColor[l], NEUTRAL);
 
 		for (int l = 0; l < this.gridCorner.length; l++)
 		     Arrays.fill(this.gridCorner[l], NEUTRAL);
-
-		this.gameOver = false;
 	}
 
 

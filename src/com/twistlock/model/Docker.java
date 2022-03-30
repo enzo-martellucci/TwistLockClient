@@ -4,8 +4,6 @@ import com.twistlock.Parameter;
 
 public class Docker
 {
-
-
 	//Attributs
 	private String name;
 	private char   color;
