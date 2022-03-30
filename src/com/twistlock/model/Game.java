@@ -66,6 +66,12 @@ public class Game
 
 
 	// Methods
+	public void fakePlay()
+	{
+		this.lstDocker[this.docker].removeLock(2);
+		this.nextDocker();
+	}
+
 	public void play(int lCorn, int cCorn)
 	{
 		if (this.gridCorner[lCorn][cCorn] != NEUTRAL)
@@ -166,7 +172,7 @@ public class Game
 
 		exit:
 		for (int l = 0; l < this.gridCorner.length; l++)
-			for (int c = 0; c < this.gridCorner.length; c++)
+			for (int c = 0; c < this.gridCorner[l].length; c++)
 				if (this.gridCorner[l][c] == NEUTRAL)
 				{
 					cornerFree = true;

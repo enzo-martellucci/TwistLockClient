@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import static com.twistlock.net.Code.*;
@@ -20,8 +19,6 @@ public class Network
 
 	private InetAddress serverIp;
 	private int         serverPort;
-
-	private int id;
 
 
 	// Constructor
@@ -58,22 +55,17 @@ public class Network
 		while (start == null || !start.startsWith(START))
 			start = this.receive(512);
 
-		// Parse dockers name and grid
+		// Parse dockers name, grid, and id
 		String[] lstDockerName = start.substring(start.indexOf("(") + 1, start.indexOf(")")).split(",");
 		int[][]  gridValue     = this.parseGrid(start);
-		System.out.println("Jos");
 
-		System.out.println(start);
-		System.out.println(Arrays.toString(lstDockerName));
-		for (int[] ligne : gridValue)
-			System.out.println(Arrays.toString(ligne));
+		String rawId = this.receive(128);
+		int    id    = 1;
+		if (rawId != null)
+			id = Integer.parseInt(rawId.substring(rawId.indexOf("=") + 1));
+		System.out.println(rawId);
 
-		this.ctrl.init(lstDockerName, gridValue);
-
-		// Parse id
-		String id = this.receive(128);
-		if (id != null)
-			this.id = Integer.parseInt(id.substring(id.indexOf("=") + 1));
+		this.ctrl.init(lstDockerName, gridValue, id - 1);
 	}
 
 	private int[][] parseGrid(String start)
@@ -104,31 +96,38 @@ public class Network
 			message = this.receive(512);
 			code    = message.substring(0, message.indexOf("-"));
 
-			switch (code)
-			{
-				case YOU_PLAY -> this.ctrl.setIsPlaying(true);
-				case OPP_PLAY -> this.oppPlay(message);
-			}
+			if (code.equals(OPP_PLAY))
+				this.oppPlay(message);
+			else if (code.equals(OPP_ILLEGAL))
+				this.ctrl.fakePlay();
 			System.out.println(message);
 		}
 	}
 
 	public void play(int line, int col)
 	{
-		String play;
+		int corner = 3;
 		if (line == 0 && col == 0)
-			play = "1A1";
-		else
-			play = "" + (line) + ('A' + col) + 4;
-		this.send(play);
+			corner = 1;
+		else if (line == 0)
+			corner = 2;
+		else if (col == 0)
+			corner = 4;
+
+		if (line != 0)
+			line--;
+		if (col != 0)
+			col--;
+
+		this.send(String.format("%d%c%s", line + 1, 'A' + col, corner));
 	}
 
 	private void oppPlay(String msg)
 	{
 		String rawPlayed = msg.substring(msg.indexOf(":") + 1);
-		int    l         = Integer.parseInt(rawPlayed.substring(0, 0));
+		int    l         = Integer.parseInt(rawPlayed.substring(0, 1)) - 1;
 		int    c         = rawPlayed.charAt(1) - 'A';
-		int    corner    = Integer.parseInt(rawPlayed.substring(2, 2));
+		int    corner    = Integer.parseInt(rawPlayed.substring(2, 3));
 
 		int lCorn = l + (corner == 4 || corner == 3 ? 1 : 0);
 		int cCorn = c + (corner == 2 || corner == 3 ? 1 : 0);

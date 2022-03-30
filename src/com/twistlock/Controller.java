@@ -11,15 +11,13 @@ public class Controller
 	private Game    game;
 	private ViewGUI viewGUI;
 
-	private boolean isPlaying;
-
+	private int tracked;
 
 	// Constructor
 	public Controller(String serverIp, int serverPort)
 	{
 		// Initialisation
-		this.game      = new Game();
-		this.isPlaying = false;
+		this.game = new Game();
 
 		try
 		{
@@ -32,30 +30,22 @@ public class Controller
 		this.network.listen();
 	}
 
-
-	// Setters
-	public void setIsPlaying(boolean isPlaying) { this.isPlaying = isPlaying; }
-
-
 	// Methods
-	public void init(String[] lstName, int[][] gridValue)
+	public void init(String[] lstName, int[][] gridValue, int tracked)
 	{
 		this.game.initDocker(lstName);
 		this.game.initGrid(gridValue);
+		this.tracked = tracked;
 
 		this.viewGUI = new ViewGUI(this, this.game);
 	}
 
 	public void play(int l, int c, boolean fromNet)
 	{
-		System.out.println(fromNet + " " + isPlaying);
 		if (!fromNet)
 		{
-			this.game      = new Game();
-			this.isPlaying = false;
-			if (!this.isPlaying)
+			if (this.game.getDocker() != this.tracked)
 				return;
-			this.isPlaying = false;
 			this.network.play(l, c);
 		}
 
@@ -64,6 +54,12 @@ public class Controller
 
 		if (this.game.isGameOver())
 			this.viewGUI.end(this.game.getWinner(), false);
+	}
+
+	public void fakePlay()
+	{
+		this.game.fakePlay();
+		this.viewGUI.maj();
 	}
 
 	public void stop()
@@ -75,8 +71,6 @@ public class Controller
 	// Main
 	public static void main(String[] args)
 	{
-		args = new String[]{ "127.0.0.1", "8000" };
-
 		if (args.length != 2)
 		{
 			System.out.println("Usage : Controller serverIp serverPort");
